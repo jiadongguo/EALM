@@ -12,6 +12,7 @@
 #include <float.h>
 #include <complex.h>
 #include <limits.h>
+#include <cblas.h>
 
 #ifndef PI
 #define PI 3.1415927
@@ -63,6 +64,8 @@
 /* complex data type */
 typedef float cpx[2];
 typedef double zpx[2];
+/* interface of optimization algorithm*/
+typedef float (*opt_fg)(float *x, float *g);
 /* allocate and free multi-dimensional arrays */
 void *alloc1(size_t n1, size_t size);
 void *realloc1(void *v, size_t n1, size_t size);
@@ -138,6 +141,7 @@ char *realloc1char(char *v, size_t n1);
 void free1char(char *p);
 /* getpar parameter parsing */
 void initargs(int argc, char **argv);
+bool getparbool(char *name, bool *p);
 int getparint(char *name, int *p);
 int getparuint(char *name, unsigned int *p);
 int getparshort(char *name, short *p);
@@ -165,6 +169,7 @@ int countnparval(int n, char *name);
 void checkpars(void);
 
 /* string to numeric conversion with error checking */
+bool eatob(char *s);
 short eatoh(char *s);
 unsigned short eatou(char *s);
 int eatoi(char *s);
@@ -193,5 +198,13 @@ void triangle_smoothing(float **mod, int n1, int n2, int r1, int r2, int repeat)
 /* pading for 2D model */
 void pad2(const float *x, float *xx, const int nz, const int nx, const int lft, const int rht, const int top, const int bot);
 
-
+/* blas function used openblas*/
+/* blas2 */
+void sscale(int n, float alpha, float *a, float *b);
+float sdot(int n, float *a, float *b);
+double ddot(int n, double *a, double *b);
+void saxpy(int n, float alpha, float *a, float *b);
+/* blas3 */
+void sgemm(int m, int n, int k, float *A, float *B, float *C);
+void dgemm(int m, int n, int k, double *A, double *B, double *C);
 #endif

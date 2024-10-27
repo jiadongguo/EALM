@@ -598,6 +598,7 @@ void free1char(char *p)
 /*
 initargs 	        Makes command line args available to subroutines (re-entrant).
                     Every par program starts with this call!
+getparbool		    get bool
 getparint		    get integers
 getparuint		    get unsigned integers
 getparshort		    get short integers
@@ -726,6 +727,10 @@ Author: CWP: John Stockwell and Jack K. Cohen, July 1995
 }
 
 /* functions to get values for the last occurrence of a parameter name */
+bool getparbool(char *name, bool *ptr)
+{
+    return getnpar(0, name, "b", ptr);
+}
 int getparint(char *name, int *ptr)
 {
     return getnpar(0, name, "i", ptr);
@@ -876,6 +881,10 @@ int getnpar(int n, char *name, char *type, void *ptr)
     {
         switch (type[0])
         {
+        case 'b':
+            *(bool *)ptr = eatob(aval);
+            ptr = (bool *)ptr + 1;
+            break;
         case 'i':
             *(int *)ptr = eatoi(aval);
             ptr = (int *)ptr + 1;
@@ -1273,7 +1282,21 @@ static int ccount(char c, char *s)
             count++;
     return count;
 }
-
+/* eatoh - convert string s to bool {true:false} */
+bool eatob(char *s)
+{
+    bool b = false;
+    char *p[] = {"YES", "yes", "Y", "y"};
+    for (int i = 0; i < 4; i++)
+    {
+        if (strcmp(p[i], s) == 0)
+        {
+            b = true;
+            break;
+        }
+    }
+    return b;
+}
 /* eatoh - convert string s to short integer {SHRT_MIN:SHRT_MAX} */
 short eatoh(char *s)
 {
@@ -1417,4 +1440,32 @@ void pad2(const float *x, float *xx, const int nz, const int nx, const int lft, 
             xx[i] = xx[j];
         }
     }
+}
+/* blas function used openblas*/
+/* blas2 */
+void sscale(int n, float alpha, float *a, float *b)
+{
+    memcpy(b, a, sizeof(float) * n);
+    cblas_sscal(n, alpha, b, 1);
+}
+float sdot(int n, float *a, float *b)
+{
+    return cblas_sdot(n, a, 1, b, 1);
+}
+double ddot(int n, double *a, double *b)
+{
+    return cblas_ddot(n, a, 1, b, 1);
+}
+void saxpy(int n, float alpha, float *a, float *b)
+{
+    cblas_saxpy(n, alpha, a, 1, b, 1);
+}
+/* blas3 */
+void sgemm(int m, int n, int k, float *A, float *B, float *C)
+{
+    cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k, 1, A, m, B, k, 0, C, m);
+}
+void dgemm(int m, int n, int k, double *A, double *B, double *C)
+{
+    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k, 1, A, m, B, k, 0, C, m);
 }

@@ -1,7 +1,7 @@
 CC = mpicc
 CFLAGS = -g -Wall
 BIN = ../bin
-LIB =  -lm -fopenmp -lpthread
+LIB =  -lm -fopenmp -lpthread -lopenblas
 INC = -I../include
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)

@@ -10,7 +10,7 @@ Programming language: C, Shell, Python
 
 Operating System: Linux
 
-Software dependencies: MPI
+Software dependencies: MPI, OpenBlas
 
 Solution method: High-order finite-dfference time-domain (FDTD) for modelling on regular grid
 
