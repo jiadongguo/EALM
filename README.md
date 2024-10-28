@@ -1,20 +1,11 @@
 # Seismic Modelling with An Effective Absorbing Boundary
 
-Seismic Modelling with An Effective Absorbing Boundary
+![](https://img.shields.io/badge/License-GPLv3-blue)  ![](https://img.shields.io/badge/Author-Jiadong_Guo-blue)  ![](https://img.shields.io/badge/Email-jdongguo@126.com-blue)  ![](https://img.shields.io/badge/Language-C_Shell_Python-blue)  ![](https://img.shields.io/badge/System-Linux-blue)  ![](https://img.shields.io/badge/Dependencies-MPI_OpenBlas-blue)
 
-Author: Jiadong Guo, China University of Petroleum-Beijing, China
 
-Email: [jdongguo@126.com](mailto:jdongguo@126.com)
+Solution method: **High-order finite-dfference time-domain (FDTD) for modelling on regular grid**
 
-Programming language: C, Shell, Python
-
-Operating System: Linux
-
-Software dependencies: MPI, OpenBlas
-
-Solution method: High-order finite-dfference time-domain (FDTD) for modelling on regular grid
-
-Governing equation: 2nd order acoustic wave equation
+Governing equation: **2nd order acoustic wave equation**
 
 ## Credit
 
