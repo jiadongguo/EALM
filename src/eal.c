@@ -1,6 +1,6 @@
 #include "waveutils.h"
 #include "cstd.h"
-static *d;          /* absorbing coefficient */
+static float *d;          /* absorbing coefficient */
 static float alpha; /*theoretical reflection coefficient*/
 static int mode;
 float laplace(int n1, int n2, int i1, int i2, float *curr, float d1, float d2);
