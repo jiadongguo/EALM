@@ -1,18 +1,15 @@
 CC = mpicc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -I../include
 BIN = ../bin
 LIB =  -lm -fopenmp -lpthread -lopenblas
-INC = -I../include
-SRC = $(wildcard *.c)
-OBJ = $(SRC:.c=.o)
+LIBS = cstd.c eal.c lap.c waveutils.c
+all: clean fdmodeling2 mkmodel
 
-all: clean fdmodeling2
+%:%.c $(LIBS)
+	$(CC) $(CFLAGS) -o $(BIN)/$@ $^ $(LIB)  
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@ $(INC) $(LIB)
-
-fdmodeling2:	$(OBJ)
-	$(CC) $(CFLAGS) -o $(BIN)/fdmodeling2 $(OBJ) $(LIB)
+# fdmodeling2:$(OBJ) main.c
+# 	$(CC) $(CFLAGS) -o $(BIN)/fdmodeling2 $(OBJ) $(LIB)
 
 clean:
 	find . -name "*.o"   -exec rm {} \;

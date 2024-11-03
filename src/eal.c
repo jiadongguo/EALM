@@ -1,16 +1,16 @@
 #include "waveutils.h"
 #include "cstd.h"
-static float *d;          /* absorbing coefficient */
+static float *d;    /* absorbing coefficient */
 static float alpha; /*theoretical reflection coefficient*/
 static int mode;
 float laplace(int n1, int n2, int i1, int i2, float *curr, float d1, float d2);
-void eal_init(acpar par, float alpha_, int mode_)
+void eal_init(acpar par, float alpha_, int mode_, float *vv)
 {
     alpha = 1. / alpha_;
     mode = mode_;
     int nz, nx, nzb, nxb, nzxb, lft, top, bot, rht;
     nz = par->nz, nx = par->nx, nzb = par->nzb, nxb = par->nxb, nzxb = par->nzxb, lft = par->lft, top = par->top, bot = par->bot, rht = par->rht;
-    float *vv = par->vv;
+    // float *vv = par->vv;
     float refl = log(alpha);
     d = alloc1float(nzxb);
     float dz = par->dz, dx = par->dx, thick, damp;
@@ -191,11 +191,11 @@ void eal_init(acpar par, float alpha_, int mode_)
     }
 }
 
-void eal_apply(acpar par, float *pre, float *curr, float *next)
+void eal_apply(acpar par, float *pre, float *curr, float *next, float *vv)
 {
     int nz, nx, nzb, nxb, nzxb, lft, top, bot, rht;
     nz = par->nz, nx = par->nx, nzb = par->nzb, nxb = par->nxb, nzxb = par->nzxb, lft = par->lft, top = par->top, bot = par->bot, rht = par->rht;
-    float *vv = par->vv, dt = par->dt, dz = par->dz, dx = par->dx, tmp, lap;
+    float dt = par->dt, dz = par->dz, dx = par->dx, tmp, lap;
     for (int ix = 0; ix < nxb; ix++)
     {
         for (int iz = 0; iz < nzb; iz++)
