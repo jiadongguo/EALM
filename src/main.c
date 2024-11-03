@@ -40,12 +40,15 @@ int main(int argc, char **argv)
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+    bool verb;
     int nz, nx, nt, top, bot, lft, rht;
     int ns, sz, sx, jsx, jsz, rz, rx, jrx, jrz, nr;
     float dz, dx, dt;
     char *fwt, *fvel, *out;
     float *wt, *vel;
     int mode;
+    if (!getparbool("verb", &verb))
+        verb = true;
     if (!getparint("mode", &mode))
     {
         mode = 0;
@@ -122,8 +125,7 @@ int main(int argc, char **argv)
     int ns0 = ns;
     int nzb, nxb, nzxb;
     float *pre, *curr, *next, *tmp;
-    float *rcd, *seis;
-    FILE *fd;
+    float *rcd;
     nzb = par->nzb, nxb = par->nxb, nzxb = nzb * nxb;
     pre = alloc1float(nzxb);
     curr = alloc1float(nzxb);
@@ -133,12 +135,11 @@ int main(int argc, char **argv)
     {
         ns += size - ns % size;
     }
-    if (rank == 0)
-    {
-        fd = fopen(out, "wb");
-        seis = alloc1float(size * nr * nt);
-    }
+
     int is_x, is_z, ir_x, ir_z;
+    MPI_File fh;
+    MPI_Status status;
+    MPI_File_open(MPI_COMM_WORLD, out, MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &fh);
     MPI_Barrier(MPI_COMM_WORLD);
     clock_t start = clock();
     for (int is = rank; is < ns; is += size)
@@ -151,7 +152,7 @@ int main(int argc, char **argv)
             is_x = lft + sx + (is - 1) * jsx, is_z = top + sz + (is - 1) * jsz;
             for (int it = 0; it < nt; it++)
             {
-                if (it % 100 == 0)
+                if (verb && it % 100 == 0)
                 {
                     printf("forward modeling is=%d/%d,it=%d/%d\n", is + 1, ns0, it + 1, nt);
                 }
@@ -164,28 +165,16 @@ int main(int argc, char **argv)
                     rcd[ir * nt + it] = curr[ir_x * nzb + ir_z];
                 }
             }
+
+            MPI_File_write_at(fh, is * sizeof(float) * nt * nr, rcd, nt * nr, MPI_FLOAT, &status);
         }
         MPI_Barrier(MPI_COMM_WORLD);
-        MPI_Gather(rcd, nr * nt, MPI_FLOAT, seis, nr * nt, MPI_FLOAT, 0, MPI_COMM_WORLD);
-        if (rank == 0)
-        {
-            if (is + size >= ns0)
-            {
-                fwrite(seis, sizeof(float), (ns0 - is) * nr * nt, fd);
-            }
-            else
-            {
-                fwrite(seis, sizeof(float), nr * nt * size, fd);
-            }
-        }
     }
-    MPI_Barrier(MPI_COMM_WORLD);
+    // MPI_Barrier(MPI_COMM_WORLD);
     clock_t finish = clock();
     if (rank == 0)
     {
         printf("Forward modeling costs time %.4fs\n", 1. * (finish - start) / CLOCKS_PER_SEC);
-        free1(seis);
-        fclose(fd);
     }
     eal_close();
     free1(rcd);
