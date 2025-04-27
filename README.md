@@ -27,6 +27,5 @@ Governing equation: **2nd order acoustic wave equation**
 
 ## Instructions to run
 
-1. go to /src and compile: cd /src;make
-2. configure input parameters in run.sh
-3. go to running template and test: bash run.sh
+1. gcc main_model.c cstd.c pad2d.c a2d_mod_28.c -o main_model -lm
+2. go to running template and test: bash run.sh

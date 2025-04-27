@@ -1,0 +1,18 @@
+echo "flag=1 
+snap=0
+nz=301 
+nx=941 
+dx=10 
+dz=10 
+dt=0.0005
+nt=2001 
+sx=470
+sz=5 
+rz=15 
+jsx=10 
+ns=1 
+vp=vel.dat
+wt=wt.dat
+wfd=snap.dat" > par.txt
+
+./main_model $(cat par.txt)
