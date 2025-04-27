@@ -1,5 +1,7 @@
 #ifndef _cstd_h_
 #define _cstd_h_
+#include <unistd.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,10 +12,29 @@
 #include <ctype.h>
 #include <math.h>
 #include <float.h>
-#include <complex.h>
 #include <limits.h>
 #include <cblas.h>
-
+#ifndef NULL
+#define NULL ((void *)0)
+#endif
+#ifndef EXIT_FAILURE
+#define EXIT_FAILURE (1)
+#endif
+#ifndef EXIT_SUCCESS
+#define EXIT_SUCCESS (0)
+#endif
+#ifndef TRUE
+#define TRUE (1)
+#endif
+#ifndef FALSE
+#define FALSE (0)
+#endif
+#ifndef YES
+#define YES (1)
+#endif
+#ifndef NO
+#define NO (0)
+#endif
 #ifndef PI
 #define PI 3.1415927
 #endif
@@ -61,87 +82,135 @@
 #ifndef NINT
 #define NINT(x) ((int)((x) > 0.0 ? (x) + 0.5 : (x) - 0.5))
 #endif
-/* complex data type */
+#define STREQ(s, t) (strcmp(s, t) == 0)
+#define STRLT(s, t) (strcmp(s, t) < 0)
+#define STRGT(s, t) (strcmp(s, t) > 0)
+#define DIM(a) (sizeof(a) / sizeof(a[0]))
+#ifndef SQUARE
+#define SQUARE(x) (1. * ((x) * (x)))
+#endif
+#define iC(fun)            \
+    {                      \
+        int ierr = fun;    \
+        assert(ierr == 0); \
+    }
+#define iA(expr)                                                             \
+    {                                                                        \
+        if ((expr) == 0)                                                     \
+        {                                                                    \
+            std::cerr << "wrong " << __LINE__ << " in " << __FILE__ << endl; \
+            assert(expr);                                                    \
+        }                                                                    \
+    }
+/* zpx data type */
 typedef float cpx[2];
 typedef double zpx[2];
-/* interface of optimization algorithm*/
+/* interface of optimization algorithm */
 typedef float (*opt_fg)(float *x, float *g);
+typedef struct sim
+{
+    int nz, nx;
+    int nbt, nbb, nbl, nbr;
+    int nzb, nxb;
+    int nt;
+    float dt, dx, dz;
+    float **v, **vv; /* velocity */
+    float **wt;      /* wavelet */
+    int sx, sz;      /* source parameters*/
+    int rz;          /* receiver parameters*/
+} sim;
+
+/* IO interface */
+void err(const char *fmt, ...);
+void warn(const char *fmt, ...);
+
+/* string to numeric conversion with error checking */
+short eatoh(char *s);
+unsigned short eatou(char *s);
+int eatoi(char *s);
+unsigned int eatop(char *s);
+long eatol(char *s);
+unsigned long eatov(char *s);
+float eatof(char *s);
+double eatod(char *s);
+
 /* allocate and free multi-dimensional arrays */
 void *alloc1(size_t n1, size_t size);
 void *realloc1(void *v, size_t n1, size_t size);
 void **alloc2(size_t n1, size_t n2, size_t size);
-void ***alloc3(size_t n1, size_t n2, size_t n3, size_t size);
-void ****alloc4(size_t n1, size_t n2, size_t n3, size_t n4, size_t size);
-void *****alloc5(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5, size_t size);
-void ******alloc6(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5, size_t n6,
-                  size_t size);
+
 void free1(void *p);
 void free2(void **p);
 void free3(void ***p);
-void free4(void ****p);
-void free5(void *****p);
-void free6(void ******p);
 
 int *alloc1int(size_t n1);
 int *realloc1int(int *v, size_t n1);
 int **alloc2int(size_t n1, size_t n2);
-int ***alloc3int(size_t n1, size_t n2, size_t n3);
-int ****alloc4int(size_t n1, size_t n2, size_t n3, size_t n4);
-int *****alloc5int(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5);
 void free1int(int *p);
 void free2int(int **p);
-void free3int(int ***p);
-void free4int(int ****p);
-void free5int(int *****p);
 
 float *alloc1float(size_t n1);
 float *realloc1float(float *v, size_t n1);
 float **alloc2float(size_t n1, size_t n2);
 float ***alloc3float(size_t n1, size_t n2, size_t n3);
-float ****alloc4float(size_t n1, size_t n2, size_t n3, size_t n4);
-float *****alloc5float(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5);
-float ******alloc6float(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5, size_t n6);
 void free1float(float *p);
 void free2float(float **p);
 void free3float(float ***p);
-void free4float(float ****p);
-void free5float(float *****p);
-void free6float(float ******p);
 
 double *alloc1double(size_t n1);
 double *realloc1double(double *v, size_t n1);
 double **alloc2double(size_t n1, size_t n2);
-double ***alloc3double(size_t n1, size_t n2, size_t n3);
 void free1double(double *p);
 void free2double(double **p);
-void free3double(double ***p);
 
-cpx *alloc1complexf(size_t n1);
-cpx *realloc1complexf(cpx *v, size_t n1);
-cpx **alloc2complexf(size_t n1, size_t n2);
-cpx ***alloc3complexf(size_t n1, size_t n2, size_t n3);
-cpx ****alloc4complexf(size_t n1, size_t n2, size_t n3, size_t n4);
-void free1complexf(cpx *p);
-void free2complexf(cpx **p);
-void free3complexf(cpx ***p);
-void free4complexf(cpx ****p);
+cpx *alloc1cpx(size_t n1);
+cpx *realloc1cpx(cpx *v, size_t n1);
+cpx **alloc2cpx(size_t n1, size_t n2);
+void free1cpx(cpx *p);
+void free2cpx(cpx **p);
 
-zpx *alloc1complex(size_t n1);
-zpx *realloc1complex(zpx *v, size_t n1);
-zpx **alloc2complex(size_t n1, size_t n2);
-zpx ***alloc3complex(size_t n1, size_t n2, size_t n3);
-zpx ****alloc4complex(size_t n1, size_t n2, size_t n3, size_t n4);
-void free1complex(zpx *p);
-void free2complex(zpx **p);
-void free3complex(zpx ***p);
-void free4complex(zpx ****p);
+zpx *alloc1zpx(size_t n1);
+zpx *realloc1zpx(zpx *v, size_t n1);
+zpx **alloc2zpx(size_t n1, size_t n2);
+void free1zpx(zpx *p);
+void free2zpx(zpx **p);
 
 char *alloc1char(size_t n1);
 char *realloc1char(char *v, size_t n1);
 void free1char(char *p);
+
+/* string to numeric conversion with error checking */
+short eatoh(char *s);
+unsigned short eatou(char *s);
+int eatoi(char *s);
+unsigned int eatop(char *s);
+long eatol(char *s);
+unsigned long eatov(char *s);
+float eatof(char *s);
+double eatod(char *s);
+
+/* system subroutine calls with error trapping */
+FILE *efopen(const char *file, const char *mode);
+FILE *efreopen(const char *file, const char *mode, FILE *stream1);
+FILE *efdopen(int fd, const char *mode);
+FILE *epopen(char *command, char *type);
+int efclose(FILE *stream);
+int epclose(FILE *stream);
+int efflush(FILE *stream);
+int eremove(const char *file);
+int erename(const char *oldfile, const char *newfile);
+int efseeko(FILE *stream, off_t offset, int origin);
+int efseek(FILE *stream, off_t offset, int origin);
+long eftell(FILE *stream);
+off_t eftello(FILE *stream);
+void erewind(FILE *stream);
+int efgetpos(FILE *stream, fpos_t *position);
+int efsetpos(FILE *stream, const fpos_t *position);
+size_t efread(void *bufptr, size_t size, size_t count, FILE *stream);
+size_t efwrite(void *bufptr, size_t size, size_t count, FILE *stream);
+
 /* getpar parameter parsing */
 void initargs(int argc, char **argv);
-bool getparbool(char *name, bool *p);
 int getparint(char *name, int *p);
 int getparuint(char *name, unsigned int *p);
 int getparshort(char *name, short *p);
@@ -168,43 +237,4 @@ int countparval(char *name);
 int countnparval(int n, char *name);
 void checkpars(void);
 
-/* string to numeric conversion with error checking */
-bool eatob(char *s);
-short eatoh(char *s);
-unsigned short eatou(char *s);
-int eatoi(char *s);
-unsigned int eatop(char *s);
-long eatol(char *s);
-unsigned long eatov(char *s);
-float eatof(char *s);
-double eatod(char *s);
-
-/* string to numeric conversion with error checking */
-short eatoh(char *s);
-unsigned short eatou(char *s);
-int eatoi(char *s);
-unsigned int eatop(char *s);
-long eatol(char *s);
-unsigned long eatov(char *s);
-float eatof(char *s);
-double eatod(char *s);
-
-void err(char *fmt, ...);
-void warn(char *fmt, ...);
-
-/* Claerbout's box-triangle smoothing adapted for 2D */
-void triangle_smoothing(float **mod, int n1, int n2, int r1, int r2, int repeat);
-
-/* pading for 2D model */
-void pad2(const float *x, float *xx, const int nz, const int nx, const int lft, const int rht, const int top, const int bot);
-
-/* blas function used openblas*/
-/* blas2 */
-void sscale(int n, float alpha, float *a, float *b);
-float sdot(int n, float *a, float *b);
-double ddot(int n, double *a, double *b);
-void saxpy(int n, float alpha, float *a, float *b);
-/* blas3 */
-void sgemm(int m, int n, int k, float *A, float *B, float *C);
-void dgemm(int m, int n, int k, double *A, double *B, double *C);
 #endif
