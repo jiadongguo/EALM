@@ -2,6 +2,7 @@ import os,sys
 # 定义程序生成的各个输出文件的名字
 cstd_lib='cstd' #自定义库文件的名字
 main_model='jd_model'
+main_ricker='jd_ricker'
 # 自身库文件
 comm_libs='''
 m openblas
@@ -22,7 +23,12 @@ env.SharedLibrary(
     source=Split(cstd_src),
     LIBS=Split(comm_libs)
 )
-
+# 雷克子波生成
+env.Program(
+    target=main_ricker, 
+    source=['ricker.c'],
+    LIBS=Split(cstd_lib+comm_libs)
+)
 # main_model的源文件和库文件
 model_src='''
 main_model.c a2d_mod_28.c abc2d.c

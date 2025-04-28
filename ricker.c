@@ -9,7 +9,7 @@ OUT  wt:  the Ricker wavelet
 #include "cstd.h"
 int main(int argc, char **argv) {
     initargs(argc, argv);
-    float fm, dt;
+    float fm, dt, t0;
     int nt;
     char *s;
     if (!getparfloat("fm", &fm))
@@ -20,22 +20,17 @@ int main(int argc, char **argv) {
         err("need nt");
     if (!getparstring("wt", &s))
         err("need wt=");
-    float nw = 2.2 / fm / dt;
-    int nnw = 2 * floor(nw / 2) + 1;
-    int nc = floor(nnw / 2);
+    if (!getparfloat("t0", &t0))
+        t0 = 1. / fm;
     float *wt = alloc1float(nt);
-    float alpha, beta;
-    if (nt < nnw)
-        err("nt is smaller than condition!");
-    for (int k = 0; k < nnw; k++) {
-        alpha = (nc - k) * fm * dt * PI;
-        beta = SQUARE(alpha);
-        wt[k] = (1 - SQUARE(beta)) * exp(-beta);
-    }
-    for (int k = nnw; k < nt; k++) {
-        wt[k] = 0;
+    float alpha;
+    for (int k = 0; k < nt; k++) {
+        alpha = (k * dt - t0) * fm * PI;
+        alpha = SQUARE(alpha);
+        wt[k] = (1 - 2 * alpha) * exp(-alpha);
     }
     FILE *fp = efopen(s, "wb");
     efwrite(wt, sizeof(float), nt, fp);
     efclose(fp);
+    free(wt);
 }

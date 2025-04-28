@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     int rz;
     float dt, dx, dz;
     int sx, sz, jsx, ns, sx0;
-    float **rcd, ***wfd;
+    float **rcd = NULL, ***wfd = NULL;
     int snap;
     initargs(argc, argv);
     if (!getparint("flag", &flag))
@@ -50,13 +50,13 @@ int main(int argc, char **argv) {
     }
     if (!getparint("rz", &rz)) {
         rz = 0;
-        warn("sz=0");
+        warn("rz=0");
     }
     if (!getparint("jsx", &jsx))
         err("need jsx");
     if (!getparint("ns", &ns)) {
         ns = 1;
-        warn("ns=0");
+        warn("ns=1");
     }
     if (!getparfloat("dt", &dt))
         err("need dt");
@@ -83,10 +83,8 @@ int main(int argc, char **argv) {
     } else {
         rcd = alloc2float(nt, nx);
     }
-
     for (int is = 0; is < ns; is++) {
-        s->sx = sx0 + jsx * is;
-        s->sz = sz;
+        sx = sx0 + jsx * is;
         sim_set_src(s, sx, sz);
         if (snap) {
             a2d_mod_eal28(NULL, s, wfd, 1);
@@ -94,12 +92,17 @@ int main(int argc, char **argv) {
             a2d_mod_eal28(rcd, s, NULL, 1);
         }
         if (snap) {
-            write_data(wfdf, wfd[0][0], nt * s->nzb * s->nxb);
+            write_data(wfdf, &wfd[0][0][0], nt * s->nzb * s->nxb);
         } else {
             write_data(wfdf, rcd[0], nt * nx);
         }
     }
     sim_close(s);
+    if (snap) {
+        free3(wfd);
+    } else {
+        free2(rcd);
+    }
 }
 void read_data(char *filename, float *v, int n) {
     FILE *fp = fopen(filename, "rb");
@@ -107,7 +110,7 @@ void read_data(char *filename, float *v, int n) {
     fclose(fp);
 }
 void write_data(char *filename, float *v, int n) {
-    FILE *fp = fopen(filename, "wb");
-    fwrite(v, sizeof(float), n, fp);
-    fclose(fp);
+    FILE *fp = efopen(filename, "wb");
+    efwrite(v, sizeof(float), n, fp);
+    efclose(fp);
 }

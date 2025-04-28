@@ -140,9 +140,11 @@ double eatod(char *s);
 void *alloc1(size_t n1, size_t size);
 void *realloc1(void *v, size_t n1, size_t size);
 void **alloc2(size_t n1, size_t n2, size_t size);
+void ***alloc3(size_t n1, size_t n2, size_t n3, size_t size);
 
 void free1(void *p);
 void free2(void **p);
+void free3(void ***p);
 
 int *alloc1int(size_t n1);
 int *realloc1int(int *v, size_t n1);
@@ -153,8 +155,10 @@ void free2int(int **p);
 float *alloc1float(size_t n1);
 float *realloc1float(float *v, size_t n1);
 float **alloc2float(size_t n1, size_t n2);
+float ***alloc3float(size_t n1, size_t n2, size_t n3);
 void free1float(float *p);
 void free2float(float **p);
+void free3float(float ***p);
 
 double *alloc1double(size_t n1);
 double *realloc1double(double *v, size_t n1);
