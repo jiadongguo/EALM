@@ -112,7 +112,6 @@
             assert(expr);                                                      \
         }                                                                      \
     }
-
 #ifndef SQUARE
 #define SQUARE(x) (1. * (x) * (x))
 #endif
@@ -141,57 +140,83 @@ void *alloc1(size_t n1, size_t size);
 void *realloc1(void *v, size_t n1, size_t size);
 void **alloc2(size_t n1, size_t n2, size_t size);
 void ***alloc3(size_t n1, size_t n2, size_t n3, size_t size);
+void ****alloc4(size_t n1, size_t n2, size_t n3, size_t n4, size_t size);
+void *****alloc5(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5,
+                 size_t size);
+void ******alloc6(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5,
+                  size_t n6, size_t size);
 
 void free1(void *p);
 void free2(void **p);
 void free3(void ***p);
+void free4(void ****p);
+void free5(void *****p);
+void free6(void ******p);
 
-int *alloc1int(size_t n1);
 int *realloc1int(int *v, size_t n1);
-int **alloc2int(size_t n1, size_t n2);
+int *alloc1int(size_t n1);
 void free1int(int *p);
+int **alloc2int(size_t n1, size_t n2);
 void free2int(int **p);
+int ***alloc3int(size_t n1, size_t n2, size_t n3);
+void free3int(int ***p);
+int ****alloc4int(size_t n1, size_t n2, size_t n3, size_t n4);
+void free4int(int ****p);
+int *****alloc5int(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5);
+void free5int(int *****p);
 
 float *alloc1float(size_t n1);
 float *realloc1float(float *v, size_t n1);
 float **alloc2float(size_t n1, size_t n2);
-float ***alloc3float(size_t n1, size_t n2, size_t n3);
 void free1float(float *p);
 void free2float(float **p);
+float ***alloc3float(size_t n1, size_t n2, size_t n3);
 void free3float(float ***p);
+float ****alloc4float(size_t n1, size_t n2, size_t n3, size_t n4);
+void free4float(float ****p);
+float *****alloc5float(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5);
+void free5float(float *****p);
+float ******alloc6float(size_t n1, size_t n2, size_t n3, size_t n4, size_t n5,
+                        size_t n6);
+void free6float(float ******p);
 
 double *alloc1double(size_t n1);
 double *realloc1double(double *v, size_t n1);
 double **alloc2double(size_t n1, size_t n2);
 void free1double(double *p);
 void free2double(double **p);
+double ***alloc3double(size_t n1, size_t n2, size_t n3);
+void free3double(double ***p);
 
 cpx *alloc1cpx(size_t n1);
 cpx *realloc1cpx(cpx *v, size_t n1);
 cpx **alloc2cpx(size_t n1, size_t n2);
 void free1cpx(cpx *p);
 void free2cpx(cpx **p);
+cpx ***alloc3cpx(size_t n1, size_t n2, size_t n3);
+void free3cpx(cpx ***p);
 
 zpx *alloc1zpx(size_t n1);
 zpx *realloc1zpx(zpx *v, size_t n1);
 zpx **alloc2zpx(size_t n1, size_t n2);
 void free1zpx(zpx *p);
 void free2zpx(zpx **p);
+zpx ***alloc3zpx(size_t n1, size_t n2, size_t n3);
+void free3zpx(zpx ***p);
 
 char *alloc1char(size_t n1);
 char *realloc1char(char *v, size_t n1);
 void free1char(char *p);
+unsigned char *****alloc5uchar(size_t n1, size_t n2, size_t n3, size_t n4,
+                               size_t n5);
+void free5uchar(unsigned char *****p);
 
-/* string to numeric conversion with error checking */
-short eatoh(char *s);
-unsigned short eatou(char *s);
-int eatoi(char *s);
-unsigned int eatop(char *s);
-long eatol(char *s);
-unsigned long eatov(char *s);
-float eatof(char *s);
-double eatod(char *s);
-
+unsigned short *****alloc5ushort(size_t n1, size_t n2, size_t n3, size_t n4,
+                                 size_t n5);
+void free5ushort(unsigned short *****p);
+unsigned short ******alloc6ushort(size_t n1, size_t n2, size_t n3, size_t n4,
+                                  size_t n5, size_t n6);
+void free6ushort(unsigned short ******p);
 /* system subroutine calls with error trapping */
 FILE *efopen(const char *file, const char *mode);
 FILE *efreopen(const char *file, const char *mode, FILE *stream1);

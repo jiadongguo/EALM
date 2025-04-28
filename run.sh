@@ -1,5 +1,5 @@
 echo "flag=1 
-snap=0
+snap=1
 nz=81 nx=201
 dx=5 dz=5
 nt=2001 dt=0.0005
