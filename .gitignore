@@ -55,6 +55,7 @@ dkms.conf
 *.bin
 *.dat
 !marmousi_dz10.dat
+!vel.dat
 *dblite
 jd*
 *.txt

@@ -3,6 +3,18 @@ clear
 close all
 nz=81;nx=201;nt=2001;dt=0.0005;dx=10;dz=10;nb=50;
 nzb=nz+2*nb;nxb=nx+2*nb;
+
+fd=fopen('vel.dat','r');
+vel=fread(fd,[nz nx],'float');
+fclose(fd);
+figure,
+imagesc(vel);
+colormap('jet');
+
+
+
+
+
 fd=fopen('snap.dat','r');
 rcd=fread(fd,[nt nx],'float');
 fclose(fd);
